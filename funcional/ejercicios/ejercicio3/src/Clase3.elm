@@ -204,7 +204,7 @@ mayoresQue valor lista =
 
 sumaFold : List Int -> Int
 sumaFold lista =
-    0
+    List.foldl (+) 0 lista
 
 
 
@@ -214,7 +214,7 @@ sumaFold lista =
 
 producto : List Int -> Int
 producto lista =
-    1
+    List.foldl (*) 1 lista
 
 
 
@@ -224,7 +224,7 @@ producto lista =
 
 contarFold : List a -> Int
 contarFold lista =
-    0
+    List.foldl (\_ acc -> acc + 1) 0 lista
 
 
 
@@ -234,7 +234,7 @@ contarFold lista =
 
 concatenar : List String -> String
 concatenar lista =
-    ""
+    List.foldl (++) "" lista
 
 
 
@@ -244,7 +244,11 @@ concatenar lista =
 
 maximo : List Int -> Int
 maximo lista =
-    0
+    case lista of
+        [] ->
+            0
+        x :: xs ->
+            List.foldl (\n acc -> if n > acc then n else acc) x xs
 
 
 
@@ -254,7 +258,7 @@ maximo lista =
 
 invertirFold : List a -> List a
 invertirFold lista =
-    []
+    List.foldl (\x acc -> x :: acc) [] lista
 
 
 
@@ -264,7 +268,7 @@ invertirFold lista =
 
 todos : (a -> Bool) -> List a -> Bool
 todos predicado lista =
-    False
+    List.foldl (\x acc -> acc && predicado x) True lista
 
 
 
@@ -274,7 +278,7 @@ todos predicado lista =
 
 alguno : (a -> Bool) -> List a -> Bool
 alguno predicado lista =
-    False
+    List.foldl (\x acc -> acc || predicado x) False lista
 
 
 
@@ -289,7 +293,9 @@ alguno predicado lista =
 
 sumaDeCuadrados : List Int -> Int
 sumaDeCuadrados lista =
-    0
+    lista
+        |> miMap (\x -> x * x)
+        |> List.foldl (+) 0
 
 
 
@@ -299,7 +305,9 @@ sumaDeCuadrados lista =
 
 contarPares : List Int -> Int
 contarPares lista =
-    0
+    lista
+        |> miFiltro (\n -> modBy 2 n == 0)
+        |> List.foldl (\_ acc -> acc + 1) 0
 
 
 
@@ -309,7 +317,15 @@ contarPares lista =
 
 promedio : List Float -> Float
 promedio lista =
-    0
+    if List.isEmpty lista then
+        0
+    else
+        let
+            suma = List.foldl (+) 0 lista
+            cantidad = List.foldl (\_ acc -> acc + 1) 0 lista
+        in
+        suma / toFloat cantidad
+        
 
 
 
@@ -319,7 +335,9 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
-    []
+    oracion
+        |> String.words
+        |> miMap String.length 
 
 
 
@@ -329,7 +347,9 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
+    oracion
+        |> String.words
+        |> miFiltro (\palabra -> String.length palabra > 3)
 
 
 
@@ -339,7 +359,9 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    lista
+        |> miFiltro (\n -> n > 0)
+        |> List.foldl (+) 0 
 
 
 
@@ -349,7 +371,8 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+    lista
+        |> miMap (\n -> if modBy 2 n == 0 then n * 2 else n)
 
 
 
