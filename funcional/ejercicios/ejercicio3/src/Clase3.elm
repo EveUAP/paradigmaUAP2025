@@ -387,7 +387,7 @@ duplicarPares lista =
 
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
+    List.foldl (++) [] lista
 
 
 
@@ -398,7 +398,27 @@ aplanar lista =
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    case lista of
+        [] ->
+            []
+        x :: xs ->
+            let
+                (grupo, resto) =
+                    List.foldl
+                        (\elem (actual, resultado) ->
+                            case actual of
+                                [] ->
+                                    ( [elem], resultado)
+                                y :: _ ->
+                                    if comparador elem y then
+                                        ( elem :: actual, resultado )
+                                    else
+                                        ([ elem ], List.reverse actual :: resultado)
+                        )
+                        ( [ x ], [])
+                        xs
+            in
+            List.reverse (List.reverse grupo :: resto)
 
 
 
@@ -408,7 +428,15 @@ agruparPor comparador lista =
 
 particionar : (a -> Bool) -> List a -> ( List a, List a )
 particionar predicado lista =
-    ( [], [] )
+    List.foldl
+        (\x (si, no) ->
+            if predicado x then
+                ( x :: si, no )
+            else
+                ( si, x :: no )
+        )
+        ( [], [])
+        lista 
 
 
 
@@ -418,7 +446,18 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
+    List.reverse
+        (List.foldl
+            (\x (accSumas) ->
+                case accSumas of 
+                    [] ->
+                        [ x ]
+                    h :: _ ->
+                        (x + h) :: accSumas
+            )
+            []
+            lista
+        )
 
 
 
