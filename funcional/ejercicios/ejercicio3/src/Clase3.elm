@@ -477,7 +477,11 @@ subSets lista =
             [ [] ]
 
         x :: xs ->
-            []
+            let
+                recursivo = subSets xs
+            in
+            recursivo ++ miMap (\sub -> x :: sub) recursivo
+            
 
 
 
